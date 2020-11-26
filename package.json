@@ -1,9 +1,8 @@
 {
   "name": "uni-http",
-  "version": "0.1.1",
+  "version": "0.1.2",
   "description": "在uniapp中发送请求和上传文件的api进行了封装",
   "main": "./dist/uni-http.js",
-  "module": "./src/index.ts",
   "types": "./dist/src/index.d.ts",
   "scripts": {
     "build": "webpack --config __config__/webpack/prod.config.js",

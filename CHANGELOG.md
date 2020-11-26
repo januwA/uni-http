@@ -1,3 +1,7 @@
+## 0.1.2 2020/11/26
+
+- 删除package.json的"module"字段
+
 ## 0.1.1 2020/11/26
 
 - update readme
