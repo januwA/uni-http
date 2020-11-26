@@ -129,7 +129,7 @@ import { UniHttp, UniHttpInterceptors } from 'uni-http';
 class MyInterceptors extends UniHttpInterceptors {
   request(options) {
     // #ifdef H5
-    options.baseURL = '';
+    if(process.env.NODE_ENV === 'development') options.baseURL = '';
     // #endif
     return options;
   }
@@ -179,9 +179,6 @@ import { UniHttp, UniHttpInterceptors, UniAbortController } from 'uni-http';
 
 class MyInterceptors extends UniHttpInterceptors {
   request(options) {
-    // #ifdef H5
-    options.baseURL = '';
-    // #endif
     return options;
   }
 
@@ -224,5 +221,5 @@ abortController.abort();
 > $ npm run build
 
 ## See also:
-- [uni.uploadFile](https://uniapp.dcloud.io/api/request/network-file?id=uploadfile
+- [uni.uploadFile](https://uniapp.dcloud.io/api/request/network-file?id=uploadfile)
 - [uni.request](http://uniapp.dcloud.io/api/request/request?id=request)
