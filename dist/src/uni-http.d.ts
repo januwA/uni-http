@@ -1,0 +1,15 @@
+/// <reference types="@dcloudio/types/uni-app" />
+import { IUniHttpConfig } from "./http-config";
+export declare class UniHttp {
+    readonly config: IUniHttpConfig;
+    constructor(config?: IUniHttpConfig);
+    request(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+    get(url: string, options?: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+    post(url: string, options?: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+    put(url: string, options?: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+    delete(url: string, options?: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+    options(url: string, options?: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+    head(url: string, options?: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+    reace(url: string, options?: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+    connect(url: string, options?: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+}

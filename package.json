@@ -1,0 +1,42 @@
+{
+  "name": "uni-http",
+  "version": "0.1.0",
+  "description": "在uniapp中发送请求和上传文件的api进行了封装",
+  "main": "./dist/uni-http.js",
+  "module": "./src/index.ts",
+  "types": "./dist/src/index.d.ts",
+  "scripts": {
+    "build": "webpack --config __config__/webpack/prod.config.js",
+    "test": "jest"
+  },
+  "keywords": [
+    "uni-http",
+    "uniapp",
+    "uniapp http",
+    "uniapp request",
+    "Ajanuw"
+  ],
+  "author": "Ajanuw",
+  "license": "MIT",
+  "homepage": "https://github.com/januwA/uni-http",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/januwA/uni-http.git"
+  },
+  "devDependencies": {
+    "@dcloudio/types": "*",
+    "@jest/types": "^26.6.2",
+    "@types/jest": "^26.0.15",
+    "@types/node": "^14.14.10",
+    "clean-webpack-plugin": "^3.0.0",
+    "jest": "^26.6.3",
+    "terser-webpack-plugin": "^5.0.3",
+    "ts-jest": "^26.4.4",
+    "ts-loader": "^8.0.11",
+    "ts-node": "^9.0.0",
+    "typescript": "^4.1.2",
+    "webpack": "^5.7.0",
+    "webpack-cli": "^4.2.0"
+  },
+  "dependencies": {}
+}
