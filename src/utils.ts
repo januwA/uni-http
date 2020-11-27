@@ -140,3 +140,21 @@ export function parseUrlParams(
 
   return result;
 }
+
+export function urlWithParams(options: IUniHttpConfig) {
+  // 1. 将baseurl和url合并在一起
+  const fullUrl = mergeUrl(options.baseURL, options.url);
+
+  // 2. 解析出url中的params
+  let r = parseUrlParams(fullUrl);
+
+  // 3. 合并params和options.params(覆盖)
+  const ps = Object.assign({}, r.params, options.params);
+
+  const paramsString = jsonToSerialize(ps);
+
+  // 4. 将合并后的params拼接在url上
+  const url = paramsString ? r.url + "?" + paramsString : r.url;
+
+  return url;
+}

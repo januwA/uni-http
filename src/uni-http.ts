@@ -5,6 +5,7 @@ import {
   mergeUrl,
   parseUrlParams,
   removeHeaderContentType,
+  urlWithParams,
 } from "./utils";
 
 function _uniHttp(
@@ -41,17 +42,7 @@ function _uniHttp(
     return _promise;
   }
 
-  // 1. 将baseurl和url合并在一起
-  const fullUrl = mergeUrl(options.baseURL, options.url);
-
-  // 2. 解析出url中的params
-  let r = parseUrlParams(fullUrl);
-
-  // 3. 合并params和options.params(覆盖)
-  const ps = Object.assign({}, r.params, options.params);
-
-  // 4. 将合并后的params拼接在url上
-  const url = r.url + "?" + jsonToSerialize(ps);
+  const url = urlWithParams(options);
 
   const isUpfile =
     options.filePath || options.file || (options.files && options.files.length);

@@ -27,3 +27,4 @@ export declare function parseUrlParams(url: string): {
     url: string;
     params: AnyObject;
 };
+export declare function urlWithParams(options: IUniHttpConfig): string;

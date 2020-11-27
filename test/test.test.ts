@@ -8,6 +8,7 @@ import {
   parseUrlParams,
   UniHttp,
   UniHttpInterceptors,
+  urlWithParams,
 } from "../src/";
 
 describe("main", () => {
@@ -70,19 +71,21 @@ describe("main", () => {
       });
   });
 
-  it("test url and params", () => {
-    // 1. 将baseurl和url合并在一起
-    const fullUrl = mergeUrl("http://localhost:3000", "/api/hello");
+  it("test url and params 1", () => {
+    expect(
+      urlWithParams({
+        baseURL: "http://localhost:3000",
+        url: "/api/hello",
+        params: { name: "ajanuw" },
+      })
+    ).toBe("http://localhost:3000/api/hello?name=ajanuw");
 
-    // 2. 解析出url中的params
-    let r = parseUrlParams(fullUrl);
-
-    // 3. 合并params和options.params(覆盖)
-    const ps = Object.assign({}, r.params, { name: "ajanuw" });
-
-    // 4. 将合并后的params拼接在url上
-    const url = r.url + "?" + jsonToSerialize(ps);
-    expect(url).toBe("http://localhost:3000/api/hello?name=ajanuw");
+    expect(
+      urlWithParams({
+        baseURL: "http://localhost:3000",
+        url: "/api/hello",
+      })
+    ).toBe("http://localhost:3000/api/hello");
   });
 
   it("test parseUrlParams", () => {

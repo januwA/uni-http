@@ -7,5 +7,6 @@ export {
   mergeUrl,
   parseUrlParams,
   removeHeaderContentType,
+  urlWithParams
 } from "./utils";
 export { UniHttpInterceptors } from "./interceptors";
