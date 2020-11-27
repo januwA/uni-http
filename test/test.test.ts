@@ -112,6 +112,7 @@ describe("main", () => {
       `name=ajanuw&id=1&arr=a&arr=b&obj=${JSON.stringify(data.obj)}`
     );
   });
+
   it("test removeHeaderContentType", () => {
     const headr = {
       "Content-Type": "application/x-www-form-urlencoded",
@@ -151,9 +152,19 @@ describe("main", () => {
 
     expect(mergeUrl(undefined, "/api/hello")).toBe("/api/hello");
 
+    expect(mergeUrl("", "api/hello")).toBe("/api/hello");
+
     expect(
       mergeUrl("http://localhost:1000", "http://localhost:3000/api/hello")
     ).toBe("http://localhost:3000/api/hello");
+
+    expect(mergeUrl("", "http://localhost:3000/api/hello")).toBe(
+      "http://localhost:3000/api/hello"
+    );
+
+    expect(mergeUrl(undefined, "http://localhost:3000/api/hello")).toBe(
+      "http://localhost:3000/api/hello"
+    );
   });
 });
 

@@ -52,10 +52,15 @@ export function mergeConfig(
  * @param path 网络url path
  */
 export function mergeUrl(base?: string, path: string = "") {
+  const pathIsHttpHttps = path.match(/^https?:\/\//);
+
+  // api/xxx to /api/xxx
+  if (!pathIsHttpHttps && !path.startsWith("/")) path = "/" + path;
+
   if (!base) return path;
 
   // 如果path以https?开始，则不合并
-  if (path.match(/^https?:\/\//)) return path;
+  if (pathIsHttpHttps) return path;
   return base.replace(/\/+$/, "") + "/" + path.replace(/^\/+/, "");
 }
 
