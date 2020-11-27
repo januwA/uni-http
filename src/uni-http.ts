@@ -18,10 +18,28 @@ function _uniHttp(
     }
   );
 
+  let cancel = false;
+  const cancelResult = {
+    errMsg: "request:fail cancel",
+  };
   // request 拦截器
-  options.interceptors?.forEach((it) => {
-    options = it.request(options);
-  });
+  if (Array.isArray(options.interceptors)) {
+    for (const it of options.interceptors) {
+      options = it.request(options);
+      if (options.cancel === true) {
+        cancel = true;
+        it.fail(cancelResult);
+        it.complete(cancelResult);
+        break;
+      }
+    }
+  }
+
+  // cancel 直接返回，不发送请求
+  if (cancel) {
+    _rej(cancelResult);
+    return _promise;
+  }
 
   // 1. 将baseurl和url合并在一起
   const fullUrl = mergeUrl(options.baseURL, options.url);
@@ -37,6 +55,36 @@ function _uniHttp(
 
   const isUpfile =
     options.filePath || options.file || (options.files && options.files.length);
+
+  const _success = (result: UniApp.RequestSuccessCallbackResult) => {
+    // success 拦截器
+    options.interceptors?.forEach((it) => {
+      result = it.success(result);
+    });
+
+    if (options.success) options.success(result);
+    else _res(result);
+  };
+
+  const _fail = (result: UniApp.GeneralCallbackResult) => {
+    // fail 拦截器
+    options.interceptors?.forEach((it) => {
+      result = it.fail(result);
+    });
+
+    if (options.fail) options.fail(result);
+    else _rej(result);
+  };
+
+  const _complete = (result: UniApp.GeneralCallbackResult) => {
+    // compilete 拦截器
+    options.interceptors?.forEach((it) => {
+      result = it.complete(result);
+    });
+
+    if (options.complete) options.complete(result);
+  };
+
   if (isUpfile) {
     // 发送文件需要删除header中的content-type
     options.header = removeHeaderContentType(options.header ?? {});
@@ -57,38 +105,16 @@ function _uniHttp(
         } catch (error) {
           data = res.data;
         }
-        let result: UniApp.RequestSuccessCallbackResult = {
+        const result: UniApp.RequestSuccessCallbackResult = {
           statusCode: res.statusCode,
           header: {},
           cookies: [],
           data,
         };
-
-        // success 拦截器
-        options.interceptors?.forEach((it) => {
-          result = it.success(result);
-        });
-
-        if (options.success) options.success(result);
-        else _res(result);
+        _success(result);
       },
-      fail: (result) => {
-        // fail 拦截器
-        options.interceptors?.forEach((it) => {
-          result = it.fail(result);
-        });
-
-        if (options.fail) options.fail(result);
-        else _rej(result);
-      },
-      complete: (result) => {
-        // compilete 拦截器
-        options.interceptors?.forEach((it) => {
-          result = it.complete(result);
-        });
-
-        if (options.complete) options.complete(result);
-      },
+      fail: _fail,
+      complete: _complete,
     });
 
     options.abortController?.promise.then(() => {
@@ -114,31 +140,9 @@ function _uniHttp(
       sslVerify: options.sslVerify,
       withCredentials: options.withCredentials,
       firstIpv4: options.firstIpv4,
-      success: (result) => {
-        // success 拦截器
-        options.interceptors?.forEach((it) => {
-          result = it.success(result);
-        });
-
-        if (options.success) options.success(result);
-        else _res(result);
-      },
-      fail: (result) => {
-        // fail 拦截器
-        options.interceptors?.forEach((it) => {
-          result = it.fail(result);
-        });
-
-        if (options.fail) options.fail(result);
-        else _rej(result);
-      },
-      complete: (result) => {
-        // compilete 拦截器
-        options.interceptors?.forEach((it) => {
-          result = it.complete(result);
-        });
-        if (options.complete) options.complete(result);
-      },
+      success: _success,
+      fail: _fail,
+      complete: _complete,
     });
 
     options.abortController?.promise.then(() => {

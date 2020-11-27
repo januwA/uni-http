@@ -6,9 +6,70 @@ import {
   removeHeaderContentType,
   jsonToSerialize,
   parseUrlParams,
+  UniHttp,
+  UniHttpInterceptors,
 } from "../src/";
 
 describe("main", () => {
+  it("test cancel 1", (done) => {
+    new UniHttp().get("http://localhost:3000/api/hello", {
+      interceptors: [
+        new (class MyInterceptors extends UniHttpInterceptors {
+          request(options: any) {
+            options.cancel = true;
+            return options;
+          }
+          success(result: any) {
+            return result;
+          }
+          fail(result: any) {
+            expect(result).toEqual(
+              expect.objectContaining({
+                errMsg: "request:fail cancel",
+              })
+            );
+            done();
+            return result;
+          }
+          complete(result: any) {
+            return result;
+          }
+        })(),
+      ],
+    });
+  });
+
+  it("test cancel 2", (done) => {
+    new UniHttp()
+      .get("http://localhost:3000/api/hello", {
+        interceptors: [
+          new (class MyInterceptors extends UniHttpInterceptors {
+            request(options: any) {
+              options.cancel = true;
+              return options;
+            }
+            success(result: any) {
+              return result;
+            }
+            fail(result: any) {
+              return result;
+            }
+            complete(result: any) {
+              return result;
+            }
+          })(),
+        ],
+      })
+      .catch((er) => {
+        expect(er).toEqual(
+          expect.objectContaining({
+            errMsg: "request:fail cancel",
+          })
+        );
+        done();
+      });
+  });
+
   it("test url and params", () => {
     // 1. 将baseurl和url合并在一起
     const fullUrl = mergeUrl("http://localhost:3000", "/api/hello");
@@ -21,7 +82,7 @@ describe("main", () => {
 
     // 4. 将合并后的params拼接在url上
     const url = r.url + "?" + jsonToSerialize(ps);
-    expect(url).toBe('http://localhost:3000/api/hello?name=ajanuw')
+    expect(url).toBe("http://localhost:3000/api/hello?name=ajanuw");
   });
 
   it("test parseUrlParams", () => {

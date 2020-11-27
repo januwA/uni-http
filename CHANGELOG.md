@@ -1,3 +1,8 @@
+## 0.2.0 2020/11/27
+
+- 添加options.cancel参数，可以在拦截器的request中阻止请求的发送
+- 可以在测试中找到"test cancel 1"和"test cancel 2"查看详情
+
 ## 0.1.2 2020/11/26
 
 - 删除package.json的"module"字段

@@ -223,3 +223,5 @@ abortController.abort();
 ## See also:
 - [uni.uploadFile](https://uniapp.dcloud.io/api/request/network-file?id=uploadfile)
 - [uni.request](http://uniapp.dcloud.io/api/request/request?id=request)
+- [options参数 IUniHttpConfig](https://github.com/januwA/uni-http/blob/main/src/http-config.ts)
+- [发送过程](https://github.com/januwA/uni-http/blob/main/src/uni-http.ts)

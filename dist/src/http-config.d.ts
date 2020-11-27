@@ -99,7 +99,19 @@ export interface IUniHttpConfig {
      */
     offProgressUpdate?: (result: any) => void;
     /**
-     * 拦截器
+     * 拦截器列表
      */
     interceptors?: UniHttpInterceptors[];
+    /**
+     * 将[cancel]设置为true，那么网络请求将不会发送
+     *
+     * 在option中将cancel设置为true，但是没有设置拦截器，将不会触发
+     *
+     * 其中一个拦截器将cancel设置为true，那么接下来的拦截器也不会触发
+     *
+     * ! 检查cancel只会在拦截器的request中，如果cancel===true
+     *
+     * ! 那么会直接调用拦截器的fail和complete
+     */
+    cancel?: boolean;
 }
