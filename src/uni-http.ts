@@ -1,9 +1,5 @@
 import { IUniHttpConfig } from "./http-config";
-import {
-  mergeConfig,
-  removeHeaderContentType,
-  urlWithParams,
-} from "./utils";
+import { mergeConfig, removeHeaderContentType, urlWithParams } from "./utils";
 
 function _uniHttp(
   options: IUniHttpConfig
@@ -23,11 +19,13 @@ function _uniHttp(
   // request 拦截器
   if (Array.isArray(options.interceptors)) {
     for (const it of options.interceptors) {
+      if (!it.request) continue;
+
       options = it.request(options);
       if (options.cancel === true) {
         cancel = true;
-        it.fail(cancelResult);
-        it.complete(cancelResult);
+        if (it.fail) it.fail(cancelResult);
+        if (it.complete) it.complete(cancelResult);
         break;
       }
     }
@@ -46,9 +44,9 @@ function _uniHttp(
 
   const _success = (result: UniApp.RequestSuccessCallbackResult) => {
     // success 拦截器
-    options.interceptors?.forEach((it) => {
-      result = it.success(result);
-    });
+    options.interceptors
+      ?.filter((it) => it.success)
+      .forEach((it) => (result = it.success(result)));
 
     if (options.success) options.success(result);
     else _res(result);
@@ -56,9 +54,9 @@ function _uniHttp(
 
   const _fail = (result: UniApp.GeneralCallbackResult) => {
     // fail 拦截器
-    options.interceptors?.forEach((it) => {
-      result = it.fail(result);
-    });
+    options.interceptors
+      ?.filter((it) => it.fail)
+      .forEach((it) => (result = it.fail(result)));
 
     if (options.fail) options.fail(result);
     else _rej(result);
@@ -66,9 +64,9 @@ function _uniHttp(
 
   const _complete = (result: UniApp.GeneralCallbackResult) => {
     // compilete 拦截器
-    options.interceptors?.forEach((it) => {
-      result = it.complete(result);
-    });
+    options.interceptors
+      ?.filter((it) => it.complete)
+      .forEach((it) => (result = it.complete(result)));
 
     if (options.complete) options.complete(result);
   };

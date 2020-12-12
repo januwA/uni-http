@@ -9,4 +9,4 @@ export {
   removeHeaderContentType,
   urlWithParams,
 } from "./utils";
-export { UniHttpInterceptors, KH5CrossInterceptor } from "./interceptors";
+export { UniHttpInterceptors } from "./interceptors";

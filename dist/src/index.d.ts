@@ -2,4 +2,4 @@ export { IUniHttpConfig } from "./http-config";
 export { UniAbortController } from "./abort-controller";
 export { UniHttp } from "./uni-http";
 export { jsonToSerialize, mergeConfig, mergeUrl, parseUrlParams, removeHeaderContentType, urlWithParams, } from "./utils";
-export { UniHttpInterceptors, KH5CrossInterceptor } from "./interceptors";
+export { UniHttpInterceptors } from "./interceptors";

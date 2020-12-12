@@ -28,29 +28,3 @@ export abstract class UniHttpInterceptors {
     result: UniApp.GeneralCallbackResult
   ): UniApp.GeneralCallbackResult;
 }
-
-/**
- * 在h5上跨域，你可能需要设置一个拦截器
- * 这只是一个简单的配置，您可能需要和你设置的proxy相配合
- */
-export class KH5CrossInterceptor extends UniHttpInterceptors {
-  request(options: IUniHttpConfig): IUniHttpConfig {
-    // #ifdef H5
-    // if (process.env.NODE_ENV === "development") {
-    //   options.baseURL = "";
-    // }
-    // #endif
-    return options;
-  }
-  success(
-    result: UniApp.RequestSuccessCallbackResult
-  ): UniApp.RequestSuccessCallbackResult {
-    return result;
-  }
-  fail(result: UniApp.GeneralCallbackResult): UniApp.GeneralCallbackResult {
-    return result;
-  }
-  complete(result: UniApp.GeneralCallbackResult): UniApp.GeneralCallbackResult {
-    return result;
-  }
-}
