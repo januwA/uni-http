@@ -36,7 +36,9 @@ export abstract class UniHttpInterceptors {
 export class KH5CrossInterceptor extends UniHttpInterceptors {
   request(options: IUniHttpConfig): IUniHttpConfig {
     // #ifdef H5
-    if (process.env.NODE_ENV === "development") options.baseURL = "";
+    // if (process.env.NODE_ENV === "development") {
+    //   options.baseURL = "";
+    // }
     // #endif
     return options;
   }
