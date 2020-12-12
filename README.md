@@ -19,6 +19,14 @@ const r = await api.get('/api/hello', {
 });
 console.log(r);
 ```
+或者:
+```js
+const r = await api.get({
+  url: '/api/hello',
+  params: { name: 'ajanuw' },
+  header: { 'x-id': 1 }
+});
+```
 
 ## Post
 ```js
@@ -172,6 +180,15 @@ manifest.json:
   }
 ```
 
+也可以使用这个简单的内置拦截器
+```js
+import { UniHttp, KH5CrossInterceptor } from 'uni-http';
+const api = new UniHttp({
+  baseURL: 'http://xxx.fun/',
+  interceptors: [new KH5CrossInterceptor()]
+})
+```
+
 
 ## 中断请求
 ```js
@@ -212,6 +229,33 @@ api.get('/api/cats', {
 
 // 中断请求
 abortController.abort();
+```
+
+## 在请求发送前结束请求
+```js
+class MyInterceptors extends UniHttpInterceptors {
+  request(options) {
+
+    // 将cancel设置为true，请求将不会发送
+    // 并且会调用拦截器的fail和complete
+    options.cancel = true;
+
+    return options;
+  }
+
+  success(result) {
+    return result;
+  }
+
+  fail(result) {
+    // { errMsg: "request:fail cancel" }
+    return result;
+  }
+
+  complete(result) {
+    return result;
+  }
+}
 ```
 
 ## test

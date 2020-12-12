@@ -137,8 +137,8 @@ export interface IUniHttpConfig {
    * 其中一个拦截器将cancel设置为true，那么接下来的拦截器也不会触发
    * 
    * ! 检查cancel只会在拦截器的request中，如果cancel===true
-   * 
    * ! 那么会直接调用拦截器的fail和complete
+   * ! { errMsg: "request:fail cancel" }
    */
   cancel?: boolean;
 }

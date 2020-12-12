@@ -1,9 +1,6 @@
 import { IUniHttpConfig } from "./http-config";
 import {
-  jsonToSerialize,
   mergeConfig,
-  mergeUrl,
-  parseUrlParams,
   removeHeaderContentType,
   urlWithParams,
 } from "./utils";
@@ -157,51 +154,104 @@ export class UniHttp {
     return _uniHttp(mergeConfig(options, this.config));
   }
 
-  get(url: string, options: IUniHttpConfig = {}) {
-    options.method = "GET";
-    options.url = url;
+  private _request(
+    method:
+      | "OPTIONS"
+      | "GET"
+      | "HEAD"
+      | "POST"
+      | "PUT"
+      | "DELETE"
+      | "TRACE"
+      | "CONNECT",
+    url: string | IUniHttpConfig,
+    options?: IUniHttpConfig
+  ): Promise<UniApp.RequestSuccessCallbackResult> {
+    if (!options) options = {};
+
+    if (typeof url === "string") {
+      options.url = url;
+    } else {
+      options = url;
+    }
+
+    options.method = method;
     return this.request(options);
   }
 
-  post(url: string, options: IUniHttpConfig = {}) {
-    options.method = "POST";
-    options.url = url;
-    return this.request(options);
+  get(
+    url: string,
+    options: IUniHttpConfig
+  ): Promise<UniApp.RequestSuccessCallbackResult>;
+  get(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+  get(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
+    return this._request("GET", url, options);
   }
 
-  put(url: string, options: IUniHttpConfig = {}) {
-    options.method = "PUT";
-    options.url = url;
-    return this.request(options);
+  post(
+    url: string,
+    options: IUniHttpConfig
+  ): Promise<UniApp.RequestSuccessCallbackResult>;
+  post(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+  post(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
+    return this._request("POST", url, options);
   }
 
-  delete(url: string, options: IUniHttpConfig = {}) {
-    options.method = "DELETE";
-    options.url = url;
-    return this.request(options);
+  put(
+    url: string,
+    options: IUniHttpConfig
+  ): Promise<UniApp.RequestSuccessCallbackResult>;
+  put(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+  put(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
+    return this._request("PUT", url, options);
   }
 
-  options(url: string, options: IUniHttpConfig = {}) {
-    options.method = "OPTIONS";
-    options.url = url;
-    return this.request(options);
+  delete(
+    url: string,
+    options: IUniHttpConfig
+  ): Promise<UniApp.RequestSuccessCallbackResult>;
+  delete(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+  delete(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
+    return this._request("DELETE", url, options);
   }
 
-  head(url: string, options: IUniHttpConfig = {}) {
-    options.method = "HEAD";
-    options.url = url;
-    return this.request(options);
+  options(
+    url: string,
+    options: IUniHttpConfig
+  ): Promise<UniApp.RequestSuccessCallbackResult>;
+  options(
+    options: IUniHttpConfig
+  ): Promise<UniApp.RequestSuccessCallbackResult>;
+  options(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
+    return this._request("OPTIONS", url, options);
   }
 
-  reace(url: string, options: IUniHttpConfig = {}) {
-    options.method = "TRACE";
-    options.url = url;
-    return this.request(options);
+  head(
+    url: string,
+    options: IUniHttpConfig
+  ): Promise<UniApp.RequestSuccessCallbackResult>;
+  head(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+  head(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
+    return this._request("HEAD", url, options);
   }
 
-  connect(url: string, options: IUniHttpConfig = {}) {
-    options.method = "CONNECT";
-    options.url = url;
-    return this.request(options);
+  reace(
+    url: string,
+    options: IUniHttpConfig
+  ): Promise<UniApp.RequestSuccessCallbackResult>;
+  reace(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+  reace(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
+    return this._request("TRACE", url, options);
+  }
+
+  connect(
+    url: string,
+    options: IUniHttpConfig
+  ): Promise<UniApp.RequestSuccessCallbackResult>;
+  connect(
+    options: IUniHttpConfig
+  ): Promise<UniApp.RequestSuccessCallbackResult>;
+  connect(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
+    return this._request("CONNECT", url, options);
   }
 }

@@ -7,6 +7,6 @@ export {
   mergeUrl,
   parseUrlParams,
   removeHeaderContentType,
-  urlWithParams
+  urlWithParams,
 } from "./utils";
-export { UniHttpInterceptors } from "./interceptors";
+export { UniHttpInterceptors, KH5CrossInterceptor } from "./interceptors";
