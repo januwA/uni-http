@@ -13,15 +13,14 @@ const api = new UniHttp({
   baseURL: 'http://localhost:3000'
 });
 
-const r = await api.get('/api/hello', {
+const res = await api.get('/api/hello', {
   params: { name: 'ajanuw' },
   header: { 'x-id': 1 }
 });
-console.log(r);
-```
-或者:
-```js
-const r = await api.get({
+
+// or
+
+const res = await api.get({
   url: '/api/hello',
   params: { name: 'ajanuw' },
   header: { 'x-id': 1 }
@@ -39,12 +38,11 @@ const api = new UniHttp({
   },
 });
 
-const r = await api.post('/api/login', {
+await api.post('/api/login', {
   data: {
     name: 'ajanuw'
   }
 });
-console.log(r);
 ```
 
 ## 使用拦截器
@@ -79,11 +77,10 @@ const api = new UniHttp({
   interceptors: [new MyInterceptors()]
 });
 
-const r = await api.get('/api/hello', {
+await api.get('/api/hello', {
   params: { name: 'ajanuw' },
   header: { 'x-id': 1 }
 });
-console.log(r);
 ```
 
 ## 创建拦截器
@@ -124,7 +121,6 @@ uni.chooseImage({
         name: 'ajanuw'
       }
     });
-    console.log(r);
   }
 });
 ```
@@ -159,9 +155,6 @@ const api = new UniHttp({
   baseURL: 'http://xxx.fun/',
   interceptors: [new MyInterceptors()]
 });
-
-const r = await api.get('/api/cats');
-console.log(r);
 ```
 
 manifest.json:
@@ -179,16 +172,6 @@ manifest.json:
     }
   }
 ```
-
-也可以使用这个简单的内置拦截器
-```js
-import { UniHttp, KH5CrossInterceptor } from 'uni-http';
-const api = new UniHttp({
-  baseURL: 'http://xxx.fun/',
-  interceptors: [new KH5CrossInterceptor()]
-})
-```
-
 
 ## 中断请求
 ```js

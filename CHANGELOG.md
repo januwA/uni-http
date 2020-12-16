@@ -1,3 +1,7 @@
+## 0.4.1 2020/12/16
+
+- update readme
+
 ## 0.4.0 2020/12/12
 
 - 删除 KH5CrossInterceptor
