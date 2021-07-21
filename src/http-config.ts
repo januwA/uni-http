@@ -4,6 +4,12 @@ import { UniHttpInterceptors } from "./interceptors";
 export interface IUniHttpConfig {
   baseURL?: string;
   url?: string;
+
+  /**
+   * method 有效值
+   *
+   * ! https://uniapp.dcloud.net.cn/api/request/request
+   */
   method?:
     | "OPTIONS"
     | "GET"
@@ -16,6 +22,8 @@ export interface IUniHttpConfig {
 
   /**
    * post data
+   *
+   * ! App（自定义组件编译模式）不支持ArrayBuffer类型
    */
   data?: AnyObject;
 
@@ -25,7 +33,9 @@ export interface IUniHttpConfig {
   params?: AnyObject;
 
   /**
-   * headers
+   * 设置请求的 header，header 中不能设置 Referer。
+   *
+   * ! App、H5端会自动带上cookie，且H5端不可手动修改
    */
   header?: AnyObject;
 
@@ -54,48 +64,62 @@ export interface IUniHttpConfig {
   file?: File;
 
   /**
-   * ! 仅H5（2.6.15+）支持
-   * 需要上传的文件列表。
+   * ! 要上传的文件对象，仅H5（2.6.15+）支持
    */
   files?: UniApp.UploadFileOptionFiles[];
 
   /**
-   * 超时时间
+   * 超时时间，单位 ms
+   *
+   * ! H5(HBuilderX 2.9.9+)、APP(HBuilderX 2.9.9+)、微信小程序（2.10.0）、支付宝小程序
    */
   timeout?: number;
 
   /**
-   * 如果设为json，会尝试对返回的数据做一次 JSON.parse
+   * 如果设为 json，会尝试对返回的数据做一次 JSON.parse
    */
   dataType?: string;
+
   /**
    * 设置响应的数据类型。合法值：text、arraybuffer
+   *
+   * ! 支付宝小程序不支持
    */
   responseType?: string;
 
   /**
    * 验证 ssl 证书
+   *
+   * ! 仅App安卓端支持（HBuilderX 2.3.3+）
    */
   sslVerify?: boolean;
+
   /**
-   * 跨域请求时是否携带凭证
+   * 跨域请求时是否携带凭证（cookies）
+   *
+   * ! 仅H5支持（HBuilderX 2.6.15+）
    */
   withCredentials?: boolean;
+
   /**
    * DNS解析时优先使用 ipv4
+   *
+   * ! 仅 App-Android 支持 (HBuilderX 2.8.0+)
    */
   firstIpv4?: boolean;
 
   /**
-   * 成功返回的回调函数
+   * 收到开发者服务器成功返回的回调函数
    */
   success?: (result: UniApp.RequestSuccessCallbackResult) => void;
+
   /**
-   * 失败的回调函数
+   * 接口调用失败的回调函数
    */
   fail?: (result: UniApp.GeneralCallbackResult) => void;
+
   /**
-   * 结束的回调函数（调用成功、失败都会执行）
+   * 接口调用结束的回调函数（调用成功、失败都会执行）
    */
   complete?: (result: UniApp.GeneralCallbackResult) => void;
 
@@ -130,12 +154,12 @@ export interface IUniHttpConfig {
   interceptors?: UniHttpInterceptors[];
 
   /**
-   * 将[cancel]设置为true，那么网络请求将不会发送
-   * 
+   * 将[cancel]设置为true，网络请求将不会发送
+   *
    * 在option中将cancel设置为true，但是没有设置拦截器，将不会触发
-   * 
+   *
    * 其中一个拦截器将cancel设置为true，那么接下来的拦截器也不会触发
-   * 
+   *
    * ! 检查cancel只会在拦截器的request中，如果cancel===true
    * ! 那么会直接调用拦截器的fail和complete
    * ! { errMsg: "request:fail cancel" }

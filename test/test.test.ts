@@ -130,7 +130,7 @@ describe("main", () => {
 
   it("test AbortController", (done) => {
     const token = new UniAbortController();
-    token.promise.then(() => {
+    token.completer.promise.then(() => {
       done();
     });
     token.abort();

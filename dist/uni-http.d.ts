@@ -2,6 +2,7 @@
 import { IUniHttpConfig } from "./http-config";
 export declare class UniHttp {
     readonly config: IUniHttpConfig;
+    static create(config?: IUniHttpConfig): UniHttp;
     constructor(config?: IUniHttpConfig);
     request(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
     private _request;
@@ -22,3 +23,4 @@ export declare class UniHttp {
     connect(url: string, options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
     connect(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
 }
+//# sourceMappingURL=uni-http.d.ts.map

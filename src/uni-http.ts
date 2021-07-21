@@ -1,21 +1,18 @@
+import { Completer } from "ajanuw-completer";
 import { IUniHttpConfig } from "./http-config";
 import { mergeConfig, removeHeaderContentType, urlWithParams } from "./utils";
+
+const cancelResultMessage = {
+  errMsg: "request:fail cancel",
+};
 
 function _uniHttp(
   options: IUniHttpConfig
 ): Promise<UniApp.RequestSuccessCallbackResult> {
-  let _res: any, _rej: any;
-  const _promise = new Promise<UniApp.RequestSuccessCallbackResult>(
-    (res, rej) => {
-      _res = res;
-      _rej = rej;
-    }
-  );
+  const completer = new Completer<UniApp.RequestSuccessCallbackResult>();
 
   let cancel = false;
-  const cancelResult = {
-    errMsg: "request:fail cancel",
-  };
+
   // request 拦截器
   if (Array.isArray(options.interceptors)) {
     for (const it of options.interceptors) {
@@ -24,8 +21,8 @@ function _uniHttp(
       options = it.request(options);
       if (options.cancel === true) {
         cancel = true;
-        if (it.fail) it.fail(cancelResult);
-        if (it.complete) it.complete(cancelResult);
+        if (it.fail) it.fail(cancelResultMessage);
+        if (it.complete) it.complete(cancelResultMessage);
         break;
       }
     }
@@ -33,8 +30,8 @@ function _uniHttp(
 
   // cancel 直接返回，不发送请求
   if (cancel) {
-    _rej(cancelResult);
-    return _promise;
+    completer.completeError(cancelResultMessage);
+    return completer.promise;
   }
 
   const url = urlWithParams(options);
@@ -49,7 +46,7 @@ function _uniHttp(
       .forEach((it) => (result = it.success(result)));
 
     if (options.success) options.success(result);
-    else _res(result);
+    else completer.complete(result);
   };
 
   const _fail = (result: UniApp.GeneralCallbackResult) => {
@@ -59,7 +56,7 @@ function _uniHttp(
       .forEach((it) => (result = it.fail(result)));
 
     if (options.fail) options.fail(result);
-    else _rej(result);
+    else completer.completeError(result);
   };
 
   const _complete = (result: UniApp.GeneralCallbackResult) => {
@@ -76,9 +73,9 @@ function _uniHttp(
     options.header = removeHeaderContentType(options.header ?? {});
     const task = uni.uploadFile({
       url: url,
+      files: options.files,
       fileType: options.fileType,
       file: options.file,
-      files: options.files,
       filePath: options.filePath,
       name: options.name,
       header: options.header,
@@ -91,6 +88,7 @@ function _uniHttp(
         } catch (error) {
           data = res.data;
         }
+
         const result: UniApp.RequestSuccessCallbackResult = {
           statusCode: res.statusCode,
           header: {},
@@ -103,17 +101,20 @@ function _uniHttp(
       complete: _complete,
     });
 
-    options.abortController?.promise.then(() => {
-      task.abort();
-    });
-    if (options.offHeadersReceived)
-      task.offHeadersReceived(options.offHeadersReceived);
-    if (options.onHeadersReceived)
-      task.onHeadersReceived(options.onHeadersReceived);
+    options.abortController?.completer.promise.then(() => task.abort());
+
     if (options.onProgressUpdate)
       task.onProgressUpdate(options.onProgressUpdate);
+
+    if (options.onHeadersReceived)
+      task.onHeadersReceived(options.onHeadersReceived);
+
     if (options.offProgressUpdate)
       task.offProgressUpdate(options.offProgressUpdate);
+
+    if (options.offHeadersReceived)
+      task.offHeadersReceived(options.offHeadersReceived);
+
   } else {
     const task = uni.request({
       url: url,
@@ -131,19 +132,22 @@ function _uniHttp(
       complete: _complete,
     });
 
-    options.abortController?.promise.then(() => {
-      task.abort();
-    });
+    options.abortController?.completer.promise.then(() => task.abort());
 
     if (options.offHeadersReceived)
       task.offHeadersReceived(options.offHeadersReceived);
+      
     if (options.onHeadersReceived)
       task.onHeadersReceived(options.onHeadersReceived);
   }
-  return _promise;
+  return completer.promise;
 }
 
 export class UniHttp {
+  static create(config: IUniHttpConfig = {}): UniHttp {
+    return new UniHttp(config);
+  }
+
   constructor(public readonly config: IUniHttpConfig = {}) {}
 
   request(
@@ -163,10 +167,8 @@ export class UniHttp {
       | "TRACE"
       | "CONNECT",
     url: string | IUniHttpConfig,
-    options?: IUniHttpConfig
+    options: IUniHttpConfig = {}
   ): Promise<UniApp.RequestSuccessCallbackResult> {
-    if (!options) options = {};
-
     if (typeof url === "string") {
       options.url = url;
     } else {

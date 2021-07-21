@@ -1,3 +1,8 @@
+## 0.4.2 2021-7-21
+
+- 更新依赖包
+- 增加`UniHttp.create`和`new UniHttp` 一样
+
 ## 0.4.1 2020/12/16
 
 - update readme

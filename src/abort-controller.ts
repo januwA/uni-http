@@ -1,13 +1,18 @@
+import { Completer } from "ajanuw-completer";
+
 /**
  * 中断请求控制器
  */
 export class UniAbortController {
-  promise: Promise<any>;
-  private _res!: any;
+  completer: Completer<any>;
   constructor() {
-    this.promise = new Promise<any>((res) => (this._res = res));
+    this.completer = new Completer();
   }
+
+  /**
+   * 中断上传任务
+   */
   abort() {
-    this._res();
+    this.completer.complete(true);
   }
 }
