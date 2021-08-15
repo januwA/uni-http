@@ -1,12 +1,42 @@
 import { Completer } from "ajanuw-completer";
 import { IUniHttpConfig } from "./http-config";
+import { UniHttpInterceptors } from "./interceptors";
 import { mergeConfig, removeHeaderContentType, urlWithParams } from "./utils";
 
 const cancelResultMessage = {
   errMsg: "request:fail cancel",
 };
 
-function _uniHttp(
+function createPromiseList(
+  interceptors: UniHttpInterceptors[],
+  cb: (it: UniHttpInterceptors) => any
+) {
+  return {
+    [Symbol.asyncIterator]() {
+      return {
+        i: 0,
+        async next() {
+          if (this.i < interceptors.length) {
+            const it = interceptors[this.i++];
+            await cb(it);
+            return { value: it, done: false };
+          }
+          return { value: null, done: true };
+        },
+      };
+    },
+  };
+}
+
+function getInterceptors(
+  interceptors: UniHttpInterceptors[] | undefined,
+  hook: "request" | "success" | "fail" | "complete"
+) {
+  if (!interceptors) return [];
+  return interceptors.filter((e) => hook in e && typeof e[hook] === "function");
+}
+
+async function _uniHttp(
   options: IUniHttpConfig
 ): Promise<UniApp.RequestSuccessCallbackResult> {
   const completer = new Completer<UniApp.RequestSuccessCallbackResult>();
@@ -14,17 +44,18 @@ function _uniHttp(
   let cancel = false;
 
   // request 拦截器
-  if (Array.isArray(options.interceptors)) {
-    for (const it of options.interceptors) {
-      if (!it.request) continue;
-
-      options = it.request(options);
-      if (options.cancel === true) {
-        cancel = true;
-        if (it.fail) it.fail(cancelResultMessage);
-        if (it.complete) it.complete(cancelResultMessage);
-        break;
-      }
+  for await (const it of createPromiseList(
+    getInterceptors(options.interceptors, "request"),
+    async (it) => {
+      return (options = await it.request(options));
+    }
+  )) {
+    if (!it) continue;
+    if (options.cancel === true) {
+      cancel = true;
+      it.fail?.(cancelResultMessage, options);
+      it.complete?.(cancelResultMessage, options);
+      break;
     }
   }
 
@@ -39,33 +70,46 @@ function _uniHttp(
   const isUpfile =
     options.filePath || options.file || (options.files && options.files.length);
 
-  const _success = (result: UniApp.RequestSuccessCallbackResult) => {
+  const _success = async (result: UniApp.RequestSuccessCallbackResult) => {
     // success 拦截器
-    options.interceptors
-      ?.filter((it) => it.success)
-      .forEach((it) => (result = it.success(result)));
+    for await (const it of createPromiseList(
+      getInterceptors(options.interceptors, "success"),
+      async (it) => {
+        return (result = await it.success(result, options));
+      }
+    )) {
+    }
 
+    // 有callback就用callback，没有就用promise
     if (options.success) options.success(result);
     else completer.complete(result);
   };
 
-  const _fail = (result: UniApp.GeneralCallbackResult) => {
+  const _fail = async (result: UniApp.GeneralCallbackResult) => {
     // fail 拦截器
-    options.interceptors
-      ?.filter((it) => it.fail)
-      .forEach((it) => (result = it.fail(result)));
+    for await (const it of createPromiseList(
+      getInterceptors(options.interceptors, "fail"),
+      async (it) => {
+        return (result = await it.fail(result, options));
+      }
+    )) {
+    }
 
     if (options.fail) options.fail(result);
     else completer.completeError(result);
   };
 
-  const _complete = (result: UniApp.GeneralCallbackResult) => {
+  const _complete = async (result: UniApp.GeneralCallbackResult) => {
     // compilete 拦截器
-    options.interceptors
-      ?.filter((it) => it.complete)
-      .forEach((it) => (result = it.complete(result)));
+    for await (const it of createPromiseList(
+      getInterceptors(options.interceptors, "complete"),
+      async (it) => {
+        return (result = await it.complete(result, options));
+      }
+    )) {
+    }
 
-    if (options.complete) options.complete(result);
+    options.complete?.(result);
   };
 
   if (isUpfile) {
@@ -114,7 +158,6 @@ function _uniHttp(
 
     if (options.offHeadersReceived)
       task.offHeadersReceived(options.offHeadersReceived);
-
   } else {
     const task = uni.request({
       url: url,
@@ -136,7 +179,7 @@ function _uniHttp(
 
     if (options.offHeadersReceived)
       task.offHeadersReceived(options.offHeadersReceived);
-      
+
     if (options.onHeadersReceived)
       task.onHeadersReceived(options.onHeadersReceived);
   }

@@ -5,9 +5,11 @@ module.exports = {
   entry: "./src/index.ts",
   output: {
     filename: "uni-http.js",
-    path: path.resolve(__dirname, "dist"),
-    library: "uniHttp",
-    libraryTarget: "umd",
+    path: path.resolve(__dirname, "dist/umd"),
+    library: {
+      name: "uniHttp",
+      type: "umd",
+    },
     globalObject: "this",
     clean: true,
   },
@@ -15,11 +17,10 @@ module.exports = {
     rules: [
       {
         test: /\.tsx?$/,
-        exclude: /(node_modules|bower_components)/,
         use: {
           loader: "ts-loader",
           options: {
-            configFile: "tsconfig.build.json",
+            configFile: "tsconfig.types.json",
           },
         },
       },

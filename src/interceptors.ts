@@ -11,20 +11,23 @@ export abstract class UniHttpInterceptors {
    * 在success拦截
    */
   abstract success(
-    result: UniApp.RequestSuccessCallbackResult
+    result: UniApp.RequestSuccessCallbackResult,
+    options: IUniHttpConfig
   ): UniApp.RequestSuccessCallbackResult;
 
   /**
    * 在fail拦截
    */
   abstract fail(
-    result: UniApp.GeneralCallbackResult
+    result: UniApp.GeneralCallbackResult,
+    options: IUniHttpConfig
   ): UniApp.GeneralCallbackResult;
 
   /**
    * 在complete拦截
    */
   abstract complete(
-    result: UniApp.GeneralCallbackResult
+    result: UniApp.GeneralCallbackResult,
+    options: IUniHttpConfig
   ): UniApp.GeneralCallbackResult;
 }

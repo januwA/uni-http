@@ -57,15 +57,15 @@ class MyInterceptors extends UniHttpInterceptors {
     return options;
   }
 
-  success(result) {
+  success(result, options) {
     return result;
   }
 
-  fail(result) {
+  fail(result, options) {
     return result;
   }
 
-  complete(result) {
+  complete(result, options) {
     uni.hideLoading();
     return result;
   }
@@ -76,44 +76,14 @@ const api = new UniHttp({
   baseURL: 'http://localhost:3000',
   interceptors: [new MyInterceptors()]
 });
-
-await api.get('/api/hello', {
-  params: { name: 'ajanuw' },
-  header: { 'x-id': 1 }
-});
 ```
-
-## 创建拦截器
-```ts
-class MyInterceptors  extends UniHttpInterceptors {
-  request(options: IUniHttpConfig): IUniHttpConfig {
-    throw new Error("Method not implemented.");
-  }
-  success(result: UniApp.RequestSuccessCallbackResult): UniApp.RequestSuccessCallbackResult {
-    throw new Error("Method not implemented.");
-  }
-  fail(result: UniApp.GeneralCallbackResult): UniApp.GeneralCallbackResult {
-    throw new Error("Method not implemented.");
-  }
-  complete(result: UniApp.GeneralCallbackResult): UniApp.GeneralCallbackResult {
-    throw new Error("Method not implemented.");
-  }
-}
-```
-
-
 
 ## 上传文件
 ```js
-import { UniHttp } from 'uni-http';
-
-const api = new UniHttp({
-  baseURL: 'http://localhost:3000'
-});
-
 uni.chooseImage({
   success: async chooseImageRes => {
     const tempFilePaths = chooseImageRes.tempFilePaths;
+
     const r = await api.post('/api/upload', {
       name: 'file',
       filePath: tempFilePaths[0],
@@ -121,6 +91,7 @@ uni.chooseImage({
         name: 'ajanuw'
       }
     });
+
   }
 });
 ```
@@ -241,14 +212,9 @@ class MyInterceptors extends UniHttpInterceptors {
 }
 ```
 
-## test
-> $ npm t
-
-## build
-> $ npm run build
-
 ## See also:
+- [options 参数 IUniHttpConfig](https://github.com/januwA/uni-http/blob/main/src/http-config.ts)
+- [拦截器超类](https://github.com/januwA/uni-http/blob/main/src/interceptors.ts)
+- [发送过程](https://github.com/januwA/uni-http/blob/main/src/uni-http.ts)
 - [uni.uploadFile](https://uniapp.dcloud.io/api/request/network-file?id=uploadfile)
 - [uni.request](http://uniapp.dcloud.io/api/request/request?id=request)
-- [options参数 IUniHttpConfig](https://github.com/januwA/uni-http/blob/main/src/http-config.ts)
-- [发送过程](https://github.com/januwA/uni-http/blob/main/src/uni-http.ts)
