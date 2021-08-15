@@ -6,12 +6,13 @@ Vue.config.productionTip = false
 import {
   UniHttp,
   UniHttpInterceptors
-} from '../dist/umd/uni-http.js';
+} from 'uni-http';
 
-class P1 extends UniHttpInterceptors {
+class P1 {
   async request(options) {
     return new Promise(res => {
       setTimeout(() => {
+        // options.cancel = true;
         console.log('p1 request');
         res(options);
       }, 2000)
@@ -28,7 +29,7 @@ class P1 extends UniHttpInterceptors {
   }
 }
 
-class P2 extends UniHttpInterceptors {
+class P2 {
   async request(options) {
     console.log('p2 request');
     return options;

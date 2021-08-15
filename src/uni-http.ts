@@ -46,9 +46,7 @@ async function _uniHttp(
   // request 拦截器
   for await (const it of createPromiseList(
     getInterceptors(options.interceptors, "request"),
-    async (it) => {
-      return (options = await it.request(options));
-    }
+    (it) => it.request?.(options)
   )) {
     if (!it) continue;
     if (options.cancel === true) {
@@ -74,9 +72,7 @@ async function _uniHttp(
     // success 拦截器
     for await (const it of createPromiseList(
       getInterceptors(options.interceptors, "success"),
-      async (it) => {
-        return (result = await it.success(result, options));
-      }
+      async (it) => (result = await it.success!(result, options))
     )) {
     }
 
@@ -89,9 +85,7 @@ async function _uniHttp(
     // fail 拦截器
     for await (const it of createPromiseList(
       getInterceptors(options.interceptors, "fail"),
-      async (it) => {
-        return (result = await it.fail(result, options));
-      }
+      async (it) => it.fail?.(result, options)
     )) {
     }
 
@@ -103,9 +97,7 @@ async function _uniHttp(
     // compilete 拦截器
     for await (const it of createPromiseList(
       getInterceptors(options.interceptors, "complete"),
-      async (it) => {
-        return (result = await it.complete(result, options));
-      }
+      async (it) => it.complete?.(result, options)
     )) {
     }
 

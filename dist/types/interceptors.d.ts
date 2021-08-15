@@ -1,9 +1,14 @@
 /// <reference types="@dcloudio/types/uni-app" />
 import { IUniHttpConfig } from "./http-config";
-export declare abstract class UniHttpInterceptors {
-    abstract request(options: IUniHttpConfig): IUniHttpConfig;
-    abstract success(result: UniApp.RequestSuccessCallbackResult, options: IUniHttpConfig): UniApp.RequestSuccessCallbackResult;
-    abstract fail(result: UniApp.GeneralCallbackResult, options: IUniHttpConfig): UniApp.GeneralCallbackResult;
-    abstract complete(result: UniApp.GeneralCallbackResult, options: IUniHttpConfig): UniApp.GeneralCallbackResult;
+declare type OrPromise<T> = T | Promise<T>;
+declare type C = IUniHttpConfig;
+declare type RSCR = UniApp.RequestSuccessCallbackResult;
+declare type GCR = UniApp.GeneralCallbackResult;
+export interface UniHttpInterceptors {
+    request?: (options: C) => void;
+    success?: (result: RSCR, options: C) => OrPromise<RSCR>;
+    fail?: (result: GCR, options: C) => void;
+    complete?: (result: GCR, options: C) => void;
 }
+export {};
 //# sourceMappingURL=interceptors.d.ts.map

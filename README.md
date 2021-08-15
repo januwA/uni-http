@@ -47,35 +47,50 @@ await api.post('/api/login', {
 
 ## 使用拦截器
 ```js
-import { UniHttp, UniHttpInterceptors } from 'uni-http';
-
-class MyInterceptors extends UniHttpInterceptors {
-
+class MyInterceptors {
   request(options) {
     options.header['x-token'] = 'xxxyyy';
     uni.showLoading();
-    return options;
   }
-
-  success(result, options) {
-    return result;
-  }
-
-  fail(result, options) {
-    return result;
-  }
-
   complete(result, options) {
     uni.hideLoading();
-    return result;
   }
-
 }
 
 const api = new UniHttp({
   baseURL: 'http://localhost:3000',
   interceptors: [new MyInterceptors()]
 });
+```
+
+## 拦截器类型
+```ts
+type OrPromise<T> = T | Promise<T>;
+type C = IUniHttpConfig;
+type RSCR = UniApp.RequestSuccessCallbackResult;
+type GCR = UniApp.GeneralCallbackResult;
+
+export interface UniHttpInterceptors {
+  /**
+   * 发送前拦截
+   */
+  request?: (options: C) => void;
+
+  /**
+   * 在success拦截
+   */
+  success?: (result: RSCR, options: C) => OrPromise<RSCR>;
+
+  /**
+   * 在fail拦截
+   */
+  fail?: (result: GCR, options: C) => void;
+
+  /**
+   * 在complete拦截
+   */
+  complete?: (result: GCR, options: C) => void;
+}
 ```
 
 ## 上传文件
@@ -99,26 +114,11 @@ uni.chooseImage({
 
 ## 在h5上跨域，你可能需要设置一个拦截器
 ```js
-import { UniHttp, UniHttpInterceptors } from 'uni-http';
-
-class MyInterceptors extends UniHttpInterceptors {
+class MyInterceptors {
   request(options) {
     // #ifdef H5
     if(process.env.NODE_ENV === 'development') options.baseURL = '';
     // #endif
-    return options;
-  }
-
-  success(result) {
-    return result;
-  }
-
-  fail(result) {
-    return result;
-  }
-
-  complete(result) {
-    return result;
   }
 }
 
@@ -148,24 +148,11 @@ manifest.json:
 ```js
 import { UniHttp, UniHttpInterceptors, UniAbortController } from 'uni-http';
 
-class MyInterceptors extends UniHttpInterceptors {
-  request(options) {
-    return options;
-  }
-
-  success(result) {
-    return result;
-  }
-
+class MyInterceptors {
   fail(result) {
     if (result.errMsg === 'request:fail abort') {
       console.log('请求被中断')
     }
-
-    return result;
-  }
-
-  complete(result) {
     return result;
   }
 }
@@ -187,27 +174,15 @@ abortController.abort();
 
 ## 在请求发送前结束请求
 ```js
-class MyInterceptors extends UniHttpInterceptors {
+class MyInterceptors {
   request(options) {
-
     // 将cancel设置为true，请求将不会发送
     // 并且会调用拦截器的fail和complete
     options.cancel = true;
-
-    return options;
-  }
-
-  success(result) {
-    return result;
   }
 
   fail(result) {
     // { errMsg: "request:fail cancel" }
-    return result;
-  }
-
-  complete(result) {
-    return result;
   }
 }
 ```
