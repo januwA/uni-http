@@ -16,12 +16,16 @@ function createPromiseList(
       return {
         i: 0,
         async next() {
-          if (this.i < interceptors.length) {
-            const it = interceptors[this.i++];
-            await cb(it);
-            return { value: it, done: false };
+          try {
+            if (this.i < interceptors.length) {
+              const it = interceptors[this.i++];
+              await cb(it);
+              return { value: it, done: false };
+            }
+            return { value: null, done: true };
+          } catch (error) {
+            throw error;
           }
-          return { value: null, done: true };
         },
       };
     },
@@ -44,17 +48,21 @@ async function _uniHttp(
   let cancel = false;
 
   // request 拦截器
-  for await (const it of createPromiseList(
-    getInterceptors(options.interceptors, "request"),
-    (it) => it.request?.(options)
-  )) {
-    if (!it) continue;
-    if (options.cancel === true) {
-      cancel = true;
-      it.fail?.(cancelResultMessage, options);
-      it.complete?.(cancelResultMessage, options);
-      break;
+  try {
+    for await (const it of createPromiseList(
+      getInterceptors(options.interceptors, "request"),
+      (it) => it.request?.(options)
+    )) {
+      if (!it) continue;
+      if (options.cancel === true) {
+        cancel = true;
+        it.fail?.(cancelResultMessage, options);
+        it.complete?.(cancelResultMessage, options);
+        break;
+      }
     }
+  } catch (error) {
+    completer.completeError(error);
   }
 
   // cancel 直接返回，不发送请求
@@ -69,39 +77,50 @@ async function _uniHttp(
     options.filePath || options.file || (options.files && options.files.length);
 
   const _success = async (result: UniApp.RequestSuccessCallbackResult) => {
-    // success 拦截器
-    for await (const it of createPromiseList(
-      getInterceptors(options.interceptors, "success"),
-      async (it) => (result = await it.success!(result, options))
-    )) {
-    }
+    try {
+      // success 拦截器
+      for await (const it of createPromiseList(
+        getInterceptors(options.interceptors, "success"),
+        async (it) => (result = await it.success!(result, options))
+      )) {
+      }
 
-    // 有callback就用callback，没有就用promise
-    if (options.success) options.success(result);
-    else completer.complete(result);
+      // 有callback就用callback，没有就用promise
+      if (options.success) options.success(result);
+      else completer.complete(result);
+    } catch (error) {
+      completer.completeError(error);
+    }
   };
 
   const _fail = async (result: UniApp.GeneralCallbackResult) => {
     // fail 拦截器
-    for await (const it of createPromiseList(
-      getInterceptors(options.interceptors, "fail"),
-      async (it) => it.fail?.(result, options)
-    )) {
-    }
+    try {
+      for await (const it of createPromiseList(
+        getInterceptors(options.interceptors, "fail"),
+        async (it) => it.fail?.(result, options)
+      )) {
+      }
 
-    if (options.fail) options.fail(result);
-    else completer.completeError(result);
+      if (options.fail) options.fail(result);
+      else completer.completeError(result);
+    } catch (error) {
+      completer.completeError(error);
+    }
   };
 
   const _complete = async (result: UniApp.GeneralCallbackResult) => {
     // compilete 拦截器
-    for await (const it of createPromiseList(
-      getInterceptors(options.interceptors, "complete"),
-      async (it) => it.complete?.(result, options)
-    )) {
+    try {
+      for await (const it of createPromiseList(
+        getInterceptors(options.interceptors, "complete"),
+        async (it) => it.complete?.(result, options)
+      )) {
+      }
+      options.complete?.(result);
+    } catch (error) {
+      completer.completeError(error);
     }
-
-    options.complete?.(result);
   };
 
   if (isUpfile) {
