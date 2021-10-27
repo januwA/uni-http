@@ -13,15 +13,12 @@ import {
 
 describe("main", () => {
   it("test cancel 1", (done) => {
-    new UniHttp().get("http://localhost:3000/api/hello", {
+    new UniHttp().get("https://jsonplaceholder.typicode.com/todos/1", {
       interceptors: [
-        new (class MyInterceptors extends UniHttpInterceptors {
+        new (class MyInterceptors implements UniHttpInterceptors {
           request(options: any) {
             options.cancel = true;
             return options;
-          }
-          success(result: any) {
-            return result;
           }
           fail(result: any) {
             expect(result).toEqual(
@@ -32,9 +29,6 @@ describe("main", () => {
             done();
             return result;
           }
-          complete(result: any) {
-            return result;
-          }
         })(),
       ],
     });
@@ -42,21 +36,12 @@ describe("main", () => {
 
   it("test cancel 2", (done) => {
     new UniHttp()
-      .get("http://localhost:3000/api/hello", {
+      .get("https://jsonplaceholder.typicode.com/todos/1", {
         interceptors: [
-          new (class MyInterceptors extends UniHttpInterceptors {
+          new (class MyInterceptors implements UniHttpInterceptors {
             request(options: any) {
               options.cancel = true;
               return options;
-            }
-            success(result: any) {
-              return result;
-            }
-            fail(result: any) {
-              return result;
-            }
-            complete(result: any) {
-              return result;
             }
           })(),
         ],
@@ -203,8 +188,8 @@ describe("mergeConfig 1", () => {
       header: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      success: (r) => {},
-      fail: (er) => {},
+      success: (r) => { },
+      fail: (er) => { },
     };
 
     mergeOptions = mergeConfig(options, globalOptions);
@@ -286,8 +271,8 @@ describe("mergeConfig 2", () => {
       header: {
         "Content-Type": "application/x-www-form-urlencoded",
       },
-      success: (r) => {},
-      fail: (er) => {},
+      success: (r) => { },
+      fail: (er) => { },
     };
 
     mergeOptions = mergeConfig(options, globalOptions);
