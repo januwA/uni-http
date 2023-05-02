@@ -1,4 +1,8 @@
 /// <reference types="@dcloudio/types/uni-app" />
+/// <reference types="@dcloudio/types/uni-app" />
+/// <reference types="@dcloudio/types/uni-app" />
+/// <reference types="@dcloudio/types/uni-app" />
+/// <reference types="@dcloudio/types/uni-app" />
 import { UniAbortController } from "./abort-controller";
 import { UniHttpInterceptors } from "./interceptors";
 export interface IUniHttpConfig {

@@ -1,1 +1,1 @@
-{"version":3,"file":"abort-controller.d.ts","sourceRoot":"","sources":["../../src/abort-controller.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,SAAS,EAAE,MAAM,kBAAkB,CAAC;AAE7C;;GAEG;AACH,qBAAa,kBAAkB;IAC7B,SAAS,EAAE,SAAS,CAAC,GAAG,CAAC,CAAC;;IAK1B;;OAEG;IACH,KAAK;CAGN"}
+{"version":3,"file":"abort-controller.d.ts","sourceRoot":"","sources":["../../src/abort-controller.ts"],"names":[],"mappings":"AAAA,OAAO,EAAE,SAAS,EAAE,MAAM,kBAAkB,CAAC;AAE7C;;GAEG;AACH,qBAAa,kBAAkB;IAC7B,SAAS,qBAAmB;IAE5B;;OAEG;IACH,KAAK;CAGN"}

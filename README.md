@@ -34,7 +34,7 @@ import { UniHttp } from 'uni-http';
 const api = new UniHttp({
   baseURL: 'http://localhost:3000',
   header: {
-    'Content-Type': 'application/x-www-form-urlencoded'
+    'Content-Type': 'application/json'
   },
 });
 

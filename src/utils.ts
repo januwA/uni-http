@@ -75,6 +75,8 @@ export function removeHeaderContentType(header: AnyObject): AnyObject {
 
 /**
  * {name: 'ajanuw'} to name=ajanuw
+ * {name: [1,2]} to name=1&name=2
+ * {name: {name: 1}} to name={"name":1}
  * @param param {}
  */
 export function jsonToSerialize(param: AnyObject): string {

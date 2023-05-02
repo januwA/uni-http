@@ -135,7 +135,7 @@ async function _uniHttp(
       name: options.name,
       header: options.header,
       formData: options.data,
-      success: (res) => {
+      success: (res: UniApp.UploadFileSuccessCallbackResult) => {
         let data;
         try {
           // 避免parse解析错误

@@ -1,9 +1,12 @@
 /// <reference types="@dcloudio/types/uni-app" />
+/// <reference types="@dcloudio/types/uni-app" />
+/// <reference types="@dcloudio/types/uni-app" />
+/// <reference types="@dcloudio/types/uni-app" />
 import { IUniHttpConfig } from "./http-config";
-declare type OrPromise<T> = T | Promise<T>;
-declare type C = IUniHttpConfig;
-declare type RSCR = UniApp.RequestSuccessCallbackResult;
-declare type GCR = UniApp.GeneralCallbackResult;
+type OrPromise<T> = T | Promise<T>;
+type C = IUniHttpConfig;
+type RSCR = UniApp.RequestSuccessCallbackResult;
+type GCR = UniApp.GeneralCallbackResult;
 export interface UniHttpInterceptors {
     /**
      * 发送前拦截

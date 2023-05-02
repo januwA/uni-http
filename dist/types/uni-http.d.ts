@@ -1,4 +1,5 @@
 /// <reference types="@dcloudio/types/uni-app" />
+/// <reference types="@dcloudio/types/uni-app" />
 import { IUniHttpConfig } from "./http-config";
 export declare class UniHttp {
     readonly config: IUniHttpConfig;

@@ -3,8 +3,7 @@ import { Completer } from "ajanuw-completer";
  * 中断请求控制器
  */
 export declare class UniAbortController {
-    completer: Completer<any>;
-    constructor();
+    completer: Completer<unknown>;
     /**
      * 中断上传任务
      */
