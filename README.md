@@ -5,6 +5,40 @@
 $ npm i uni-http
 ```
 
+## 基本使用
+```js
+// api.js
+import { UniHttp } from 'uni-http';
+
+class Api extends UniHttp {
+	config = {
+		baseURL: 'https://jsonplaceholder.typicode.com',
+		header: {
+			'Content-Type': 'application/json'
+		}
+	};
+	
+  // 你可以在这里制作一个简易的拦截器
+	request(...args) {
+		console.log(args);
+		return super.request(...args).then(res => res.data);
+	}
+
+	async hello() {
+		return this.get("/todos/1");
+	}
+}
+
+const api = new Api();
+
+export { api };
+```
+
+```js
+import { api } from "api.js"
+api.hello().then(data => { console.log(data); });
+```
+
 ## Get
 ```js
 import { UniHttp } from 'uni-http';
