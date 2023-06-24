@@ -123,10 +123,11 @@ async function _uniHttp(
     }
   };
 
+  let task: any /* UniApp.UploadTask | UniApp.RequestTask */;
   if (isUpfile) {
     // 发送文件需要删除header中的content-type
     options.header = removeHeaderContentType(options.header ?? {});
-    const task = uni.uploadFile({
+    task = uni.uploadFile({
       url: url,
       files: options.files,
       fileType: options.fileType,
@@ -155,22 +156,8 @@ async function _uniHttp(
       fail: _fail,
       complete: _complete,
     });
-
-    options.abortController?.completer.promise.then(() => task.abort());
-
-    if (options.onProgressUpdate)
-      task.onProgressUpdate(options.onProgressUpdate);
-
-    if (options.onHeadersReceived)
-      task.onHeadersReceived(options.onHeadersReceived);
-
-    if (options.offProgressUpdate)
-      task.offProgressUpdate(options.offProgressUpdate);
-
-    if (options.offHeadersReceived)
-      task.offHeadersReceived(options.offHeadersReceived);
   } else {
-    const task = uni.request({
+    task = uni.request({
       url: url,
       data: options.data,
       header: options.header,
@@ -185,15 +172,21 @@ async function _uniHttp(
       fail: _fail,
       complete: _complete,
     });
-
-    options.abortController?.completer.promise.then(() => task.abort());
-
-    if (options.offHeadersReceived)
-      task.offHeadersReceived(options.offHeadersReceived);
-
-    if (options.onHeadersReceived)
-      task.onHeadersReceived(options.onHeadersReceived);
   }
+
+  options.abortController?.completer.promise.then(() => task.abort());
+
+  if (options.onProgressUpdate) task.onProgressUpdate(options.onProgressUpdate);
+
+  if (options.onHeadersReceived)
+    task.onHeadersReceived(options.onHeadersReceived);
+
+  if (options.offProgressUpdate)
+    task.offProgressUpdate(options.offProgressUpdate);
+
+  if (options.offHeadersReceived)
+    task.offHeadersReceived(options.offHeadersReceived);
+
   return completer.promise;
 }
 
@@ -235,7 +228,7 @@ export class UniHttp {
 
   get(
     url: string,
-    options: IUniHttpConfig
+    options?: IUniHttpConfig
   ): Promise<UniApp.RequestSuccessCallbackResult>;
   get(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
   get(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
@@ -244,7 +237,7 @@ export class UniHttp {
 
   post(
     url: string,
-    options: IUniHttpConfig
+    options?: IUniHttpConfig
   ): Promise<UniApp.RequestSuccessCallbackResult>;
   post(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
   post(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
@@ -253,7 +246,7 @@ export class UniHttp {
 
   put(
     url: string,
-    options: IUniHttpConfig
+    options?: IUniHttpConfig
   ): Promise<UniApp.RequestSuccessCallbackResult>;
   put(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
   put(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
@@ -262,7 +255,7 @@ export class UniHttp {
 
   delete(
     url: string,
-    options: IUniHttpConfig
+    options?: IUniHttpConfig
   ): Promise<UniApp.RequestSuccessCallbackResult>;
   delete(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
   delete(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
@@ -271,7 +264,7 @@ export class UniHttp {
 
   options(
     url: string,
-    options: IUniHttpConfig
+    options?: IUniHttpConfig
   ): Promise<UniApp.RequestSuccessCallbackResult>;
   options(
     options: IUniHttpConfig
@@ -282,7 +275,7 @@ export class UniHttp {
 
   head(
     url: string,
-    options: IUniHttpConfig
+    options?: IUniHttpConfig
   ): Promise<UniApp.RequestSuccessCallbackResult>;
   head(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
   head(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
@@ -291,7 +284,7 @@ export class UniHttp {
 
   reace(
     url: string,
-    options: IUniHttpConfig
+    options?: IUniHttpConfig
   ): Promise<UniApp.RequestSuccessCallbackResult>;
   reace(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
   reace(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
@@ -300,7 +293,7 @@ export class UniHttp {
 
   connect(
     url: string,
-    options: IUniHttpConfig
+    options?: IUniHttpConfig
   ): Promise<UniApp.RequestSuccessCallbackResult>;
   connect(
     options: IUniHttpConfig

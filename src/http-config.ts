@@ -139,7 +139,8 @@ export interface IUniHttpConfig {
   onHeadersReceived?: (result: any) => void;
 
   /***
-   * 监听下载进度变化
+   * 
+   * uploadFile: 监听上传进度变化
    */
   onProgressUpdate?: (result: UniApp.OnProgressUpdateResult) => void;
 
