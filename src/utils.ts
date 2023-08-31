@@ -10,6 +10,7 @@ export function mergeConfig(
   c2: IUniHttpConfig
 ): IUniHttpConfig {
   const result: IUniHttpConfig = {
+    requestFunc: c1.requestFunc ?? c2.requestFunc,
     baseURL: c1.baseURL ?? c2.baseURL,
     url: c1.url ?? c2.url,
     method: c1.method ?? c2.method ?? "GET",

@@ -221,6 +221,35 @@ class MyInterceptors {
 }
 ```
 
+## 自定义发送请求的方式
+
+这通常在h5上很有用
+
+```js
+const api = new UniHttp({
+  baseURL: 'https://jsonplaceholder.typicode.com',
+
+  // #ifdef H5
+  async requestFunc(url, options, success, fail, complete) {
+    // console.log(url,options,success,fail,complete);
+    try {
+      const res = await fetch(url)
+      const d = await res.json();
+      success(d);
+      complete(d);
+    } catch (e) {
+      fail(e)
+    }
+  },
+  // #endif
+  
+});
+
+await api.get('/todos/1').then(res => {
+  console.log(res);
+});
+```
+
 ## See also:
 - [options 参数 IUniHttpConfig](https://github.com/januwA/uni-http/blob/main/src/http-config.ts)
 - [拦截器超类](https://github.com/januwA/uni-http/blob/main/src/interceptors.ts)

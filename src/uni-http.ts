@@ -73,10 +73,9 @@ async function _uniHttp(
 
   const url = urlWithParams(options);
 
-  const isUpfile =
-    options.filePath || options.file || (options.files && options.files.length);
-
-  const _success = async (result: UniApp.RequestSuccessCallbackResult) => {
+  const _success = async (
+    result: any /* UniApp.RequestSuccessCallbackResult */
+  ) => {
     try {
       // success 拦截器
       for await (const it of createPromiseList(
@@ -93,7 +92,7 @@ async function _uniHttp(
     }
   };
 
-  const _fail = async (result: UniApp.GeneralCallbackResult) => {
+  const _fail = async (result: any /* UniApp.GeneralCallbackResult */) => {
     // fail 拦截器
     try {
       for await (const it of createPromiseList(
@@ -109,7 +108,7 @@ async function _uniHttp(
     }
   };
 
-  const _complete = async (result: UniApp.GeneralCallbackResult) => {
+  const _complete = async (result: any /* UniApp.GeneralCallbackResult */) => {
     // compilete 拦截器
     try {
       for await (const it of createPromiseList(
@@ -123,69 +122,79 @@ async function _uniHttp(
     }
   };
 
-  let task: any /* UniApp.UploadTask | UniApp.RequestTask */;
-  if (isUpfile) {
-    // 发送文件需要删除header中的content-type
-    options.header = removeHeaderContentType(options.header ?? {});
-    task = uni.uploadFile({
-      url: url,
-      files: options.files,
-      fileType: options.fileType,
-      file: options.file,
-      filePath: options.filePath,
-      name: options.name,
-      header: options.header,
-      formData: options.data,
-      success: (res: UniApp.UploadFileSuccessCallbackResult) => {
-        let data;
-        try {
-          // 避免parse解析错误
-          data = JSON.parse(res.data);
-        } catch (error) {
-          data = res.data;
-        }
-
-        const result: UniApp.RequestSuccessCallbackResult = {
-          statusCode: res.statusCode,
-          header: {},
-          cookies: [],
-          data,
-        };
-        _success(result);
-      },
-      fail: _fail,
-      complete: _complete,
-    });
+  if (options.requestFunc && typeof options.requestFunc === "function") {
+    options.requestFunc(url, options, _success, _fail, _complete);
   } else {
-    task = uni.request({
-      url: url,
-      data: options.data,
-      header: options.header,
-      method: options.method,
-      timeout: options.timeout,
-      dataType: options.dataType,
-      responseType: options.responseType,
-      sslVerify: options.sslVerify,
-      withCredentials: options.withCredentials,
-      firstIpv4: options.firstIpv4,
-      success: _success,
-      fail: _fail,
-      complete: _complete,
-    });
+    const isUpfile =
+      options.filePath ||
+      options.file ||
+      (options.files && options.files.length);
+
+    let task: any /* UniApp.UploadTask | UniApp.RequestTask */;
+    if (isUpfile) {
+      // 发送文件需要删除header中的content-type
+      options.header = removeHeaderContentType(options.header ?? {});
+      task = uni.uploadFile({
+        url: url,
+        files: options.files,
+        fileType: options.fileType,
+        file: options.file,
+        filePath: options.filePath,
+        name: options.name,
+        header: options.header,
+        formData: options.data,
+        success: (res: UniApp.UploadFileSuccessCallbackResult) => {
+          let data;
+          try {
+            // 避免parse解析错误
+            data = JSON.parse(res.data);
+          } catch (error) {
+            data = res.data;
+          }
+
+          const result: UniApp.RequestSuccessCallbackResult = {
+            statusCode: res.statusCode,
+            header: {},
+            cookies: [],
+            data,
+          };
+          _success(result);
+        },
+        fail: _fail,
+        complete: _complete,
+      });
+    } else {
+      task = uni.request({
+        url: url,
+        data: options.data,
+        header: options.header,
+        method: options.method,
+        timeout: options.timeout,
+        dataType: options.dataType,
+        responseType: options.responseType,
+        sslVerify: options.sslVerify,
+        withCredentials: options.withCredentials,
+        firstIpv4: options.firstIpv4,
+        success: _success,
+        fail: _fail,
+        complete: _complete,
+      });
+    }
+
+    options.abortController?.completer.promise.then(() => task.abort());
+
+    if (options.onProgressUpdate)
+      task.onProgressUpdate(options.onProgressUpdate);
+
+    if (options.onHeadersReceived)
+      task.onHeadersReceived(options.onHeadersReceived);
+
+    if (options.offProgressUpdate)
+      task.offProgressUpdate(options.offProgressUpdate);
+
+    if (options.offHeadersReceived)
+      task.offHeadersReceived(options.offHeadersReceived);
   }
-
-  options.abortController?.completer.promise.then(() => task.abort());
-
-  if (options.onProgressUpdate) task.onProgressUpdate(options.onProgressUpdate);
-
-  if (options.onHeadersReceived)
-    task.onHeadersReceived(options.onHeadersReceived);
-
-  if (options.offProgressUpdate)
-    task.offProgressUpdate(options.offProgressUpdate);
-
-  if (options.offHeadersReceived)
-    task.offHeadersReceived(options.offHeadersReceived);
 
   return completer.promise;
 }

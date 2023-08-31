@@ -2,6 +2,22 @@ import { UniAbortController } from "./abort-controller";
 import { UniHttpInterceptors } from "./interceptors";
 
 export interface IUniHttpConfig {
+  /**
+   * 自定义request方式，不使用默认的 uni.request 和 uni.uploadFile
+   * 
+   * 可以根据 url 和 options 发送请求
+   * 
+   * 然后必须调用 success，fail，complete 三个回调函数
+   * 
+   */
+  requestFunc?: (
+    url: string,
+    options: IUniHttpConfig,
+    success: (result: any) => Promise<void>,
+    fail: (result: any) => Promise<void>,
+    complete: (result: any) => Promise<void>
+  ) => void;
+
   baseURL?: string;
   url?: string;
 
@@ -139,7 +155,7 @@ export interface IUniHttpConfig {
   onHeadersReceived?: (result: any) => void;
 
   /***
-   * 
+   *
    * uploadFile: 监听上传进度变化
    */
   onProgressUpdate?: (result: UniApp.OnProgressUpdateResult) => void;
