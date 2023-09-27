@@ -40,10 +40,8 @@ function getInterceptors(
   return interceptors.filter((e) => hook in e && typeof e[hook] === "function");
 }
 
-async function _uniHttp(
-  options: IUniHttpConfig
-): Promise<UniApp.RequestSuccessCallbackResult> {
-  const completer = new Completer<UniApp.RequestSuccessCallbackResult>();
+async function _uniHttp<T = any>(options: IUniHttpConfig): Promise<T> {
+  const completer = new Completer<T>();
 
   let cancel = false;
 
@@ -199,17 +197,15 @@ async function _uniHttp(
   return completer.promise;
 }
 
-export class UniHttp {
+export class UniHttp<T = any /*UniApp.RequestSuccessCallbackResult*/> {
   static create(config: IUniHttpConfig = {}): UniHttp {
     return new UniHttp(config);
   }
 
   constructor(public readonly config: IUniHttpConfig = {}) {}
 
-  request(
-    options: IUniHttpConfig
-  ): Promise<UniApp.RequestSuccessCallbackResult> {
-    return _uniHttp(mergeConfig(options, this.config));
+  request(options: IUniHttpConfig): Promise<T> {
+    return _uniHttp<T>(mergeConfig(options, this.config));
   }
 
   private _request(
@@ -224,7 +220,7 @@ export class UniHttp {
       | "CONNECT",
     url: string | IUniHttpConfig,
     options: IUniHttpConfig = {}
-  ): Promise<UniApp.RequestSuccessCallbackResult> {
+  ): Promise<T> {
     if (typeof url === "string") {
       options.url = url;
     } else {
@@ -235,78 +231,50 @@ export class UniHttp {
     return this.request(options);
   }
 
-  get(
-    url: string,
-    options?: IUniHttpConfig
-  ): Promise<UniApp.RequestSuccessCallbackResult>;
-  get(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+  get(url: string, options?: IUniHttpConfig): Promise<T>;
+  get(options: IUniHttpConfig): Promise<T>;
   get(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
     return this._request("GET", url, options);
   }
 
-  post(
-    url: string,
-    options?: IUniHttpConfig
-  ): Promise<UniApp.RequestSuccessCallbackResult>;
-  post(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+  post(url: string, options?: IUniHttpConfig): Promise<T>;
+  post(options: IUniHttpConfig): Promise<T>;
   post(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
     return this._request("POST", url, options);
   }
 
-  put(
-    url: string,
-    options?: IUniHttpConfig
-  ): Promise<UniApp.RequestSuccessCallbackResult>;
-  put(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+  put(url: string, options?: IUniHttpConfig): Promise<T>;
+  put(options: IUniHttpConfig): Promise<T>;
   put(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
     return this._request("PUT", url, options);
   }
 
-  delete(
-    url: string,
-    options?: IUniHttpConfig
-  ): Promise<UniApp.RequestSuccessCallbackResult>;
-  delete(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+  delete(url: string, options?: IUniHttpConfig): Promise<T>;
+  delete(options: IUniHttpConfig): Promise<T>;
   delete(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
     return this._request("DELETE", url, options);
   }
 
-  options(
-    url: string,
-    options?: IUniHttpConfig
-  ): Promise<UniApp.RequestSuccessCallbackResult>;
-  options(
-    options: IUniHttpConfig
-  ): Promise<UniApp.RequestSuccessCallbackResult>;
+  options(url: string, options?: IUniHttpConfig): Promise<T>;
+  options(options: IUniHttpConfig): Promise<T>;
   options(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
     return this._request("OPTIONS", url, options);
   }
 
-  head(
-    url: string,
-    options?: IUniHttpConfig
-  ): Promise<UniApp.RequestSuccessCallbackResult>;
-  head(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+  head(url: string, options?: IUniHttpConfig): Promise<T>;
+  head(options: IUniHttpConfig): Promise<T>;
   head(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
     return this._request("HEAD", url, options);
   }
 
-  reace(
-    url: string,
-    options?: IUniHttpConfig
-  ): Promise<UniApp.RequestSuccessCallbackResult>;
-  reace(options: IUniHttpConfig): Promise<UniApp.RequestSuccessCallbackResult>;
+  reace(url: string, options?: IUniHttpConfig): Promise<T>;
+  reace(options: IUniHttpConfig): Promise<T>;
   reace(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
     return this._request("TRACE", url, options);
   }
 
-  connect(
-    url: string,
-    options?: IUniHttpConfig
-  ): Promise<UniApp.RequestSuccessCallbackResult>;
-  connect(
-    options: IUniHttpConfig
-  ): Promise<UniApp.RequestSuccessCallbackResult>;
+  connect(url: string, options?: IUniHttpConfig): Promise<T>;
+  connect(options: IUniHttpConfig): Promise<T>;
   connect(url: string | IUniHttpConfig, options?: IUniHttpConfig) {
     return this._request("CONNECT", url, options);
   }

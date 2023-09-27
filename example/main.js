@@ -20,24 +20,25 @@ const api = new UniHttp({
   interceptors: [new P1()],
   
   // #ifdef H5
-  async requestFunc(url, options, success, fail, complete) {
-    // console.log(url,options,success,fail,complete);
-    try {
-      const res = await fetch(url)
-      const d = await res.json();
-      success(d);
-      complete(d);
-    } catch (e) {
-      fail(e)
-    }
-  },
+  // async requestFunc(url, options, success, fail, complete) {
+  //   // console.log(url,options,success,fail,complete);
+  //   try {
+  //     const res = await fetch(url)
+  //     const d = await res.json();
+  //     success(d);
+  //   } catch (e) {
+  //     fail(e)
+  //   } finally {
+  //     complete();
+  //   }
+  // },
   // #endif
   
 });
 
 (async () => {
   try {
-    await api.get('/todos/1', {}).then(res => {
+    await api.get('/todos/1').then(res => {
       console.log(res);
     });
     console.log('success');
